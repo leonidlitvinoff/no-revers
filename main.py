@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 pygame.init()
 size = width, height = 600, 800
 screen = pygame.display.set_mode(size)
@@ -10,7 +11,7 @@ class Board:
     def __init__(self, width, height, rect, pos):
         self.width = width
         self.height = height
-        self.board = [[0] * width for _ in range(height)]
+        self.board = [[randint(1, 2) for __ in range(width)] for _ in range(height)]
         self.rect = rect
         self.pos = pos
 
@@ -37,13 +38,14 @@ class Board:
                 pygame.draw.rect(screen, (255, 255, 255), (i + self.pos[0], j + self.pos[1],
                                                             self.rect[0],
                                                             self.rect[1]), 1)
-                if self.board[count_1][count] == 2:
+                if self.board[count_1][count] == 1:
                     pygame.draw.ellipse(screen, (255, 0, 0), (i + self.pos[0] + 2, j + self.pos[1] + 2,
                                                                self.rect[0] - 2,
-                                                               self.rect[1] - 2), 2)
-                elif self.board[count_1][count] == 1:
-                    pygame.draw.line(screen, (0, 0, 255), (i + self.pos[0], j + self.pos[1]), (i + self.pos[0] + self.rect[0], j + self.pos[1] + self.rect[1]), 2)
-                    pygame.draw.line(screen, (0, 0, 255), (i + self.pos[0], j + self.pos[1] + self.rect[1]), (i + self.pos[0] + self.rect[0], j + self.pos[1] + self.rect[1] - self.rect[1]), 2)
+                                                               self.rect[1] - 2))
+                elif self.board[count_1][count] == 2:
+                    pygame.draw.ellipse(screen, (0, 0, 255), (i + self.pos[0] + 2, j + self.pos[1] + 2,
+                                                              self.rect[0] - 2,
+                                                              self.rect[1] - 2))
                 count_1 += 1
             count += 1
 
@@ -51,8 +53,11 @@ class Board:
         return num + 1
 
     def mouse_click(self, ev):
-        if self.can((ev.pos[0] - self.pos[0]) // self.rect[0], (ev.pos[1] - self.pos[1]) // self.rect[1]):
-            self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][(ev.pos[0] - self.pos[0]) // self.rect[0]] = self.revrs(self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][(ev.pos[0] - self.pos[0]) // self.rect[0]])
+        for i in range(self.width):
+            self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][i] = self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][(ev.pos[0] - self.pos[0]) // self.rect[0]]
+        for i in range(self.height):
+            self.board[i][(ev.pos[0] - self.pos[0]) // self.rect[0]] = self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][(ev.pos[0] - self.pos[0]) // self.rect[0]]
+        print(self.board[(ev.pos[1] - self.pos[1]) // self.rect[1]][(ev.pos[0] - self.pos[0]) // self.rect[0]])
 
 
 boarder = Board(5, 5, (50, 50), (70, 40))
